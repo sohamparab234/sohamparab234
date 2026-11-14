@@ -3,7 +3,7 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/soham-parab234">
+  <a href="https://github.com/sohamparab234">
     <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=600&size=19&duration=2800&pause=1000&color=7C3AED&center=true&vCenter=true&multiline=false&width=620&height=42&lines=Hi+there!+I'm+Soham+Parab+%F0%9F%91%8B;Computer+Engineering+Student+%F0%9F%92%BB;Building+Projects+%26+Learning+Every+Day+%F0%9F%9A%80;Exploring+AI%2C+Machine+Learning+%26+Software;Turning+Ideas+Into+Projects+%E2%9A%A1" width="100%" style="max-width: 620px;" alt="Typing SVG" />
   </a>
 </p>
@@ -21,7 +21,7 @@
     <img src="https://img.shields.io/badge/Email-Contact-7C3AED?style=for-the-badge&logo=gmail&logoColor=white&labelColor=111111" alt="Email" />
   </a>
   &nbsp;
-  <a href="https://github.com/soham-parab234" target="_blank">
+  <a href="https://github.com/sohamparab234" target="_blank">
     <img src="https://img.shields.io/badge/GitHub-Follow-111111?style=for-the-badge&logo=github&logoColor=7C3AED&labelColor=111111" alt="GitHub" />
   </a>
 
@@ -33,7 +33,7 @@
 </p>
 
 <p align="center">
-  <img src="https://komarev.com/ghpvc/?username=soham-parab234&label=PROFILE%20VIEWS&color=7C3AED&style=for-the-badge" alt="Profile Views" />
+  <img src="https://komarev.com/ghpvc/?username=sohamparab234&label=PROFILE%20VIEWS&color=7C3AED&style=for-the-badge" alt="Profile Views" />
 </p>
 
 ---
@@ -129,7 +129,7 @@ An interoperability-focused project designed to explore how different government
 <br />
 
 <p>
-  <a href="https://github.com/soham-parab234/GovSync" target="_blank">
+  <a href="https://github.com/sohamparab234/GovSync" target="_blank">
     <img src="https://img.shields.io/badge/Source_Code-💻_View_on_GitHub-111111?style=for-the-badge&logo=github&logoColor=white&labelColor=111111" alt="Source Code" />
   </a>
 </p>
@@ -181,13 +181,13 @@ An interoperability-focused project designed to explore how different government
 <h2 align="center">📊 GitHub Analytics</h2>
 
 <p align="center">
-  <img src="https://github-readme-stats-fast.vercel.app/api?username=soham-parab234&show_icons=true&bg_color=111111&title_color=7C3AED&text_color=f3f4f6&icon_color=7C3AED&border_color=7C3AED&border_radius=8" width="100%" style="max-width: 440px;" alt="GitHub Stats" />
+  <img src="https://github-readme-stats-fast.vercel.app/api?username=sohamparab234&show_icons=true&bg_color=111111&title_color=7C3AED&text_color=f3f4f6&icon_color=7C3AED&border_color=7C3AED&border_radius=8" width="100%" style="max-width: 440px;" alt="GitHub Stats" />
   &nbsp;&nbsp;
-  <img src="https://github-readme-stats-fast.vercel.app/api/top-langs/?username=soham-parab234&layout=compact&bg_color=111111&title_color=7C3AED&text_color=f3f4f6&border_color=7C3AED&border_radius=8" width="100%" style="max-width: 350px;" alt="Top Languages" />
+  <img src="https://github-readme-stats-fast.vercel.app/api/top-langs/?username=sohamparab234&layout=compact&bg_color=111111&title_color=7C3AED&text_color=f3f4f6&border_color=7C3AED&border_radius=8" width="100%" style="max-width: 350px;" alt="Top Languages" />
 </p>
 
 <p align="center">
-  <img src="https://github-readme-streak-stats.herokuapp.com/?user=soham-parab234&theme=dark&hide_border=false&border=7C3AED&background=111111&ring=7C3AED&fire=7C3AED&currStreakNum=ffffff&sideNums=ffffff&currStreakLabel=7C3AED&sideLabels=7C3AED&dates=999999" width="100%" style="max-width: 480px;" alt="GitHub Streak" />
+  <img src="https://streak-stats.demolab.com?user=sohamparab234&theme=dark&hide_border=false&border=7C3AED&background=111111&ring=7C3AED&fire=7C3AED&currStreakNum=ffffff&sideNums=ffffff&currStreakLabel=7C3AED&sideLabels=7C3AED&dates=999999" width="100%" style="max-width: 480px;" alt="GitHub Streak" />
 </p>
 
 ---
@@ -195,7 +195,7 @@ An interoperability-focused project designed to explore how different government
 <h2 align="center">⚡ Contribution Journey</h2>
 
 <p align="center">
-  <img src="https://raw.githubusercontent.com/platane/snk/output/github-contribution-grid-snake-dark.svg" width="100%" alt="GitHub Contribution Snake" />
+  <img src="https://raw.githubusercontent.com/sohamparab234/sohamparab234/output/github-contribution-grid-snake-dark.svg" width="100%" alt="GitHub Contribution Snake" />
 </p>
 
 ---

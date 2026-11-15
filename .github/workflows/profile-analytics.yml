@@ -9,6 +9,10 @@ on:
       - ".github/workflows/profile-analytics.yml"
       - "scripts/generate_streak.py"
 
+concurrency:
+  group: profile-analytics-${{ github.ref }}
+  cancel-in-progress: true
+
 permissions:
   contents: write
 

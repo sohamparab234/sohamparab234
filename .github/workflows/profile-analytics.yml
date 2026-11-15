@@ -1,0 +1,55 @@
+name: Update GitHub profile analytics
+
+on:
+  schedule:
+    - cron: "17 3 * * *" # 08:47 Asia/Kolkata daily
+  workflow_dispatch:
+  push:
+    paths:
+      - ".github/workflows/profile-analytics.yml"
+      - "scripts/generate_streak.py"
+
+permissions:
+  contents: write
+
+jobs:
+  update-analytics:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out profile repository
+        uses: actions/checkout@v4
+
+      - name: Generate GitHub stats card
+        uses: stats-organization/github-readme-stats-action@v2
+        with:
+          card: stats
+          options: username=${{ github.repository_owner }}&show_icons=true&include_all_commits=true&hide_rank=true&bg_color=111111&title_color=7C3AED&text_color=f3f4f6&icon_color=7C3AED&border_color=7C3AED&border_radius=8
+          path: profile/stats.svg
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fail_on_error: true
+
+      - name: Generate top languages card
+        uses: stats-organization/github-readme-stats-action@v2
+        with:
+          card: top-langs
+          options: username=${{ github.repository_owner }}&layout=compact&langs_count=6&bg_color=111111&title_color=7C3AED&text_color=f3f4f6&border_color=7C3AED&border_radius=8
+          path: profile/top-langs.svg
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fail_on_error: true
+
+      - name: Generate timezone-correct streak card
+        run: python scripts/generate_streak.py
+        env:
+          TZ: Asia/Kolkata
+
+      - name: Commit generated analytics cards
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add profile/stats.svg profile/top-langs.svg profile/streak.svg
+          if git diff --cached --quiet; then
+            echo "Analytics cards are already up to date."
+            exit 0
+          fi
+          git commit -m "Update GitHub profile analytics"
+          git push

@@ -181,13 +181,13 @@ An interoperability-focused project designed to explore how different government
 <h2 align="center">📊 GitHub Analytics</h2>
 
 <p align="center">
-  <img src="./profile/stats.svg" width="100%" style="max-width: 330px;" alt="GitHub Stats" />
+  <img src="./profile/stats.svg" width="320" alt="GitHub Stats" />
   &nbsp;&nbsp;
-  <img src="./profile/top-langs.svg" width="100%" style="max-width: 270px;" alt="Top Languages" />
+  <img src="./profile/top-langs.svg" width="260" alt="Top Languages" />
 </p>
 
 <p align="center">
-  <img src="./profile/streak.svg" width="100%" style="max-width: 360px;" alt="GitHub Streak (Asia/Mumbai)" />
+  <img src="./profile/streak.svg" width="340" alt="GitHub Streak (Asia/Mumbai)" />
 </p>
 
 ---

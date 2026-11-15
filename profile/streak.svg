@@ -1,12 +1,12 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="480" height="190" viewBox="0 0 480 190" role="img" aria-labelledby="title desc">
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="170" viewBox="0 0 420 170" role="img" aria-labelledby="title desc">
 <title id="title">GitHub contribution streak</title>
-<desc id="desc">Current streak: 6 days. Longest streak: 6 days. Calculated from the public GitHub contribution calendar using Asia/Kolkata dates.</desc>
-<rect x="1" y="1" width="478" height="188" rx="10" fill="#111111" stroke="#7C3AED" stroke-width="2"/>
-<text x="24" y="34" fill="#A78BFA" font-family="Arial, sans-serif" font-size="17" font-weight="700">GitHub Streak</text>
-<text x="24" y="103" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="58" font-weight="700">6</text>
-<text x="119" y="101" fill="#A78BFA" font-family="Arial, sans-serif" font-size="20">days</text>
-<text x="24" y="132" fill="#D1D5DB" font-family="Arial, sans-serif" font-size="13">10 Nov 2026 — 15 Nov 2026</text>
-<line x1="24" y1="148" x2="456" y2="148" stroke="#393044" />
-<text x="24" y="171" fill="#A78BFA" font-family="Arial, sans-serif" font-size="12">Longest: 6 days</text>
-<text x="456" y="171" text-anchor="end" fill="#999999" font-family="Arial, sans-serif" font-size="11">Updated 15 Nov 2026 · IST</text>
+<desc id="desc">Current streak: 6 days. Longest streak: 6 days. Calculated using Asia/Mumbai dates.</desc>
+<rect x="1" y="1" width="418" height="168" rx="10" fill="#111111" stroke="#7C3AED" stroke-width="2"/>
+<text x="22" y="31" fill="#A78BFA" font-family="Arial, sans-serif" font-size="16" font-weight="700">GitHub Streak</text>
+<text x="22" y="91" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="52" font-weight="700">6</text>
+<text x="108" y="89" fill="#A78BFA" font-family="Arial, sans-serif" font-size="18">days</text>
+<text x="22" y="118" fill="#D1D5DB" font-family="Arial, sans-serif" font-size="12">10 Nov 2026 — 15 Nov 2026</text>
+<line x1="22" y1="133" x2="398" y2="133" stroke="#393044"/>
+<text x="22" y="154" fill="#A78BFA" font-family="Arial, sans-serif" font-size="11">Longest: 6 days</text>
+<text x="398" y="154" text-anchor="end" fill="#999999" font-family="Arial, sans-serif" font-size="10">Updated 15 Nov 2026 · Asia/Mumbai</text>
 </svg>

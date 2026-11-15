@@ -146,9 +146,13 @@ def main():
     # silently publishing a known-wrong streak if GitHub's markup changes.
     confirmed_day = date(2026, 11, 9)
     if today >= confirmed_day and confirmed_day in days and not days[confirmed_day]:
+        needles = ("2026-11-09", "November 9, 2026", "Nov 9, 2026")
+        for needle in needles:
+            for match in list(re.finditer(re.escape(needle), html, re.IGNORECASE))[:4]:
+                print(f"HTML DEBUG {needle}: {html[max(0, match.start()-350):match.end()+350]!r}")
         raise RuntimeError(
             "GitHub parser still reads 2026-11-09 as zero. Refusing to publish "
-            "an incorrect streak; inspect the contribution tooltip markup."
+            "an incorrect streak; inspect the diagnostic HTML fragments above."
         )
 
     current, start, end, longest = calculate_streaks(days, today)

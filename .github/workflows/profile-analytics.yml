@@ -52,4 +52,6 @@ jobs:
             exit 0
           fi
           git commit -m "Update GitHub profile analytics"
+          # Another workflow may update the default branch while these cards are generated.
+          git pull --rebase origin main
           git push

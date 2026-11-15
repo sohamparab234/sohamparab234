@@ -101,6 +101,8 @@ def main():
     with open(OUTPUT, "w", encoding="utf-8") as file:
         file.write(make_svg(current, start, end, longest, today.strftime("%d %b %Y")))
     print(f"Parsed {len(days)} contribution days from GitHub's public calendar.")
+    recent = sorted(day for day in days if day >= today - timedelta(days=13))
+    print("Recent contribution days (Asia/Kolkata calendar): " + ", ".join(f"{day}={int(days[day])}" for day in recent))
     print(f"Asia/Kolkata current streak: {current}; range: {start} to {end}; longest: {longest}.")
 
 

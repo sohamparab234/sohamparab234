@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Generate a streak card from GitHub's contribution calendar."""
 from datetime import date, datetime, timedelta
-from html import escape
+from html import escape, unescape
 from html.parser import HTMLParser
 import re
 from urllib.request import Request, urlopen
@@ -154,6 +154,34 @@ def main():
     parser = ContributionCalendarParser()
     parser.feed(html)
     days = parser.days
+
+    # GitHub's current markup puts each <tool-tip> immediately after its
+    # contribution <td>. The tooltip is linked by for="<td id>" and contains
+    # the authoritative count, while data-level may be stale/zero. Join them
+    # explicitly so the tooltip count overrides the visual intensity level.
+    cell_tooltip = re.compile(
+        r'<td\\b(?P<cell_attrs>[^>]*)>(?P<cell_body>.*?)</td>\\s*'
+        r'<tool-tip\\b(?P<tip_attrs>[^>]*)>(?P<tip_body>.*?)</tool-tip>',
+        re.IGNORECASE | re.DOTALL,
+    )
+    for match in cell_tooltip.finditer(html):
+        cell_attrs = match.group("cell_attrs")
+        tip_attrs = match.group("tip_attrs")
+        cell_id = re.search(r'\\bid="([^"]+)"', cell_attrs, re.IGNORECASE)
+        tip_for = re.search(r'\\bfor="([^"]+)"', tip_attrs, re.IGNORECASE)
+        cell_date = re.search(r'\\bdata-date="([^"]+)"', cell_attrs, re.IGNORECASE)
+        if not cell_id or not tip_for or not cell_date or cell_id.group(1) != tip_for.group(1):
+            continue
+        day = parse_date(cell_date.group(1))
+        if day is None:
+            continue
+        tooltip_text = unescape(re.sub(r"<[^>]+>", " ", match.group("tip_body")))
+        count = re.search(r"(\\d+)\\s+contributions?", tooltip_text, re.IGNORECASE)
+        if count:
+            days[day] = int(count.group(1)) > 0
+        elif re.search(r"no contributions?", tooltip_text, re.IGNORECASE):
+            days[day] = False
+
     today = datetime.now(TIMEZONE).date()
 
     if len(days) < 300:

@@ -1,45 +1,83 @@
 #!/usr/bin/env python3
-"""Generate a GitHub streak card from GitHub's public contribution calendar."""
+"""Generate a streak card from GitHub's contribution calendar."""
 from datetime import date, datetime, timedelta
 from html import escape
 from html.parser import HTMLParser
+import re
 from urllib.request import Request, urlopen
 from zoneinfo import ZoneInfo
 
 USERNAME = "sohamparab234"
-# Asia/Mumbai is UTC+05:30; the IANA tz database names this zone Asia/Kolkata.
+# Asia/Mumbai is UTC+05:30; the IANA database key is Asia/Kolkata.
 TIMEZONE = ZoneInfo("Asia/Kolkata")
 TIMEZONE_LABEL = "Asia/Mumbai"
 URL = f"https://github.com/users/{USERNAME}/contributions"
 OUTPUT = "profile/streak.svg"
+DATE_PATTERN = re.compile(r"([A-Z][a-z]+ \d{1,2}, \d{4})")
+COUNT_PATTERN = re.compile(r"(\d+) contributions? on ", re.IGNORECASE)
 
 
-class ContributionCells(HTMLParser):
-    """Read contribution attributes wherever GitHub places them in the HTML."""
+def parse_date(value):
+    try:
+        return date.fromisoformat(value)
+    except (ValueError, TypeError):
+        match = DATE_PATTERN.search(value or "")
+        if not match:
+            return None
+        try:
+            return datetime.strptime(match.group(1), "%B %d, %Y").date()
+        except ValueError:
+            return None
+
+
+class ContributionCalendarParser(HTMLParser):
+    """Handle GitHub's data-date cells and accessible tooltip labels."""
 
     def __init__(self):
         super().__init__()
         self.days = {}
+        self.diagnostics = {}
+
+    def record(self, day, active):
+        if day is not None:
+            self.days[day] = bool(active)
+
+    def parse_label(self, value):
+        day = parse_date(value)
+        if day is None:
+            return
+        count = COUNT_PATTERN.search(value or "")
+        if count:
+            active = int(count.group(1)) > 0
+        else:
+            active = not bool(re.search(r"\bno contributions?\b", value or "", re.I))
+        self.record(day, active)
+        if day == date(2026, 11, 9):
+            self.diagnostics["2026-11-09"] = value
 
     def handle_starttag(self, tag, attrs):
         attrs = dict(attrs)
-        day = attrs.get("data-date")
-        if not day:
-            return
-        try:
-            parsed_day = date.fromisoformat(day)
-        except (ValueError, TypeError):
-            return
+        raw_day = attrs.get("data-date")
+        day = parse_date(raw_day) if raw_day else None
+        if day is not None:
+            count = attrs.get("data-count")
+            level = attrs.get("data-level")
+            if count is not None:
+                self.record(day, int(count) > 0)
+            elif level is not None:
+                self.record(day, int(level) > 0)
 
-        # GitHub can place these attributes on different elements. Prefer
-        # exact contribution counts; fall back to the calendar intensity level.
-        count = attrs.get("data-count")
-        level = attrs.get("data-level")
-        try:
-            active = int(count) > 0 if count is not None else int(level or 0) > 0
-        except (ValueError, TypeError):
-            return
-        self.days[parsed_day] = active
+        # GitHub may expose the actual contribution count/date in a nested
+        # tooltip's aria-label or title rather than on the date-bearing cell.
+        for key in ("aria-label", "title", "data-original-title"):
+            if attrs.get(key):
+                self.parse_label(attrs[key])
+
+    def handle_data(self, data):
+        # Also support tooltip text nodes such as "2 contributions on Monday,
+        # November 9, 2026" when GitHub omits an accessible-label attribute.
+        if "contribution" in data.lower() and DATE_PATTERN.search(data):
+            self.parse_label(data)
 
 
 def calculate_streaks(days, today):
@@ -49,7 +87,7 @@ def calculate_streaks(days, today):
     while days.get(cursor, False):
         current += 1
         cursor -= timedelta(days=1)
-    current_start = active_end - timedelta(days=current - 1) if current else None
+    start = active_end - timedelta(days=current - 1) if current else None
 
     longest = 0
     run = 0
@@ -59,19 +97,19 @@ def calculate_streaks(days, today):
             longest = max(longest, run)
         else:
             run = 0
-    return current, current_start, active_end if current else None, longest
+    return current, start, active_end if current else None, longest
 
 
 def make_svg(current, start, end, longest, updated):
     date_line = f"{start.strftime('%d %b %Y')} — {end.strftime('%d %b %Y')}" if current else "No active streak yet"
-    current_label = "day" if current == 1 else "days"
+    unit = "day" if current == 1 else "days"
     return f'''<svg xmlns="http://www.w3.org/2000/svg" width="420" height="170" viewBox="0 0 420 170" role="img" aria-labelledby="title desc">
 <title id="title">GitHub contribution streak</title>
-<desc id="desc">Current streak: {current} {current_label}. Longest streak: {longest} days. Calculated using {TIMEZONE_LABEL} dates.</desc>
+<desc id="desc">Current streak: {current} {unit}. Longest streak: {longest} days. Calculated using {TIMEZONE_LABEL} dates.</desc>
 <rect x="1" y="1" width="418" height="168" rx="10" fill="#111111" stroke="#7C3AED" stroke-width="2"/>
 <text x="22" y="31" fill="#A78BFA" font-family="Arial, sans-serif" font-size="16" font-weight="700">GitHub Streak</text>
 <text x="22" y="91" fill="#FFFFFF" font-family="Arial, sans-serif" font-size="52" font-weight="700">{current}</text>
-<text x="108" y="89" fill="#A78BFA" font-family="Arial, sans-serif" font-size="18">{current_label}</text>
+<text x="108" y="89" fill="#A78BFA" font-family="Arial, sans-serif" font-size="18">{unit}</text>
 <text x="22" y="118" fill="#D1D5DB" font-family="Arial, sans-serif" font-size="12">{escape(date_line)}</text>
 <line x1="22" y1="133" x2="398" y2="133" stroke="#393044"/>
 <text x="22" y="154" fill="#A78BFA" font-family="Arial, sans-serif" font-size="11">Longest: {longest} days</text>
@@ -93,25 +131,33 @@ def main():
             raise RuntimeError(f"GitHub contributions endpoint returned HTTP {response.status}")
         html = response.read().decode("utf-8", errors="replace")
 
-    parser = ContributionCells()
+    parser = ContributionCalendarParser()
     parser.feed(html)
     days = parser.days
     today = datetime.now(TIMEZONE).date()
 
     if len(days) < 300:
-        raise RuntimeError(f"Expected a rolling-year contribution calendar, parsed only {len(days)} days.")
+        raise RuntimeError(f"Expected at least 300 contribution dates, parsed {len(days)}.")
     latest = max(days)
     if latest < today - timedelta(days=1) or latest > today + timedelta(days=1):
-        raise RuntimeError(f"Contribution calendar is stale or unexpected: latest date is {latest}; local date is {today}.")
+        raise RuntimeError(f"Calendar stale/unexpected: latest={latest}, {TIMEZONE_LABEL} today={today}.")
+
+    # Soham confirmed two contributions on this date. Fail closed rather than
+    # silently publishing a known-wrong streak if GitHub's markup changes.
+    confirmed_day = date(2026, 11, 9)
+    if today >= confirmed_day and confirmed_day in days and not days[confirmed_day]:
+        raise RuntimeError(
+            "GitHub parser still reads 2026-11-09 as zero. Refusing to publish "
+            "an incorrect streak; inspect the contribution tooltip markup."
+        )
 
     current, start, end, longest = calculate_streaks(days, today)
-    nov9 = days.get(date(2026, 11, 9))
     import os
     os.makedirs("profile", exist_ok=True)
     with open(OUTPUT, "w", encoding="utf-8") as file:
         file.write(make_svg(current, start, end, longest, today.strftime("%d %b %Y")))
-    print(f"Parsed {len(days)} contribution days from GitHub's public calendar.")
-    print(f"2026-11-09 contribution activity parsed: {nov9!r}.")
+    print(f"Parsed {len(days)} contribution dates.")
+    print(f"2026-11-09 activity: {days.get(confirmed_day)!r}; tooltip: {parser.diagnostics.get('2026-11-09')!r}.")
     print(f"{TIMEZONE_LABEL} current streak: {current}; range: {start} to {end}; longest: {longest}.")
 
 

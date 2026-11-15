@@ -37,6 +37,8 @@ class ContributionCalendarParser(HTMLParser):
         super().__init__()
         self.days = {}
         self.diagnostics = {}
+        self.id_to_date = {}
+        self.tooltip_for = None
 
     def record(self, day, active):
         if day is not None:
@@ -60,6 +62,8 @@ class ContributionCalendarParser(HTMLParser):
         raw_day = attrs.get("data-date")
         day = parse_date(raw_day) if raw_day else None
         if day is not None:
+            if attrs.get("id"):
+                self.id_to_date[attrs["id"]] = day
             count = attrs.get("data-count")
             level = attrs.get("data-level")
             if count is not None:
@@ -67,17 +71,33 @@ class ContributionCalendarParser(HTMLParser):
             elif level is not None:
                 self.record(day, int(level) > 0)
 
-        # GitHub may expose the actual contribution count/date in a nested
-        # tooltip's aria-label or title rather than on the date-bearing cell.
+        # GitHub places the contribution count in a sibling tooltip linked
+        # to the calendar cell by its "for" attribute.
+        if tag.lower() == "tool-tip" and attrs.get("for"):
+            self.tooltip_for = attrs["for"]
+
         for key in ("aria-label", "title", "data-original-title"):
             if attrs.get(key):
                 self.parse_label(attrs[key])
 
     def handle_data(self, data):
-        # Also support tooltip text nodes such as "2 contributions on Monday,
-        # November 9, 2026" when GitHub omits an accessible-label attribute.
+        if self.tooltip_for and "contribution" in data.lower():
+            day = self.id_to_date.get(self.tooltip_for)
+            if day is not None:
+                count = COUNT_PATTERN.search(data)
+                if count:
+                    self.record(day, int(count.group(1)) > 0)
+                elif "no contributions" in data.lower():
+                    self.record(day, False)
+                if day == date(2026, 11, 9):
+                    self.diagnostics["2026-11-09"] = data
+
         if "contribution" in data.lower() and DATE_PATTERN.search(data):
             self.parse_label(data)
+
+    def handle_endtag(self, tag):
+        if tag.lower() == "tool-tip":
+            self.tooltip_for = None
 
 
 def calculate_streaks(days, today):
@@ -146,13 +166,9 @@ def main():
     # silently publishing a known-wrong streak if GitHub's markup changes.
     confirmed_day = date(2026, 11, 9)
     if today >= confirmed_day and confirmed_day in days and not days[confirmed_day]:
-        needles = ("2026-11-09", "November 9, 2026", "Nov 9, 2026")
-        for needle in needles:
-            for match in list(re.finditer(re.escape(needle), html, re.IGNORECASE))[:4]:
-                print(f"HTML DEBUG {needle}: {html[max(0, match.start()-350):match.end()+350]!r}")
         raise RuntimeError(
             "GitHub parser still reads 2026-11-09 as zero. Refusing to publish "
-            "an incorrect streak; inspect the diagnostic HTML fragments above."
+            "an incorrect streak."
         )
 
     current, start, end, longest = calculate_streaks(days, today)

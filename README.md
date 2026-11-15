@@ -181,13 +181,13 @@ An interoperability-focused project designed to explore how different government
 <h2 align="center">📊 GitHub Analytics</h2>
 
 <p align="center">
-  <img src="https://github-readme-stats-fast.vercel.app/api?username=sohamparab234&show_icons=true&bg_color=111111&title_color=7C3AED&text_color=f3f4f6&icon_color=7C3AED&border_color=7C3AED&border_radius=8" width="100%" style="max-width: 440px;" alt="GitHub Stats" />
+  <img src="./profile/stats.svg" width="100%" style="max-width: 440px;" alt="GitHub Stats" />
   &nbsp;&nbsp;
-  <img src="https://github-readme-stats-fast.vercel.app/api/top-langs/?username=sohamparab234&layout=compact&bg_color=111111&title_color=7C3AED&text_color=f3f4f6&border_color=7C3AED&border_radius=8" width="100%" style="max-width: 350px;" alt="Top Languages" />
+  <img src="./profile/top-langs.svg" width="100%" style="max-width: 350px;" alt="Top Languages" />
 </p>
 
 <p align="center">
-  <img src="https://streak-stats.demolab.com?user=sohamparab234&theme=dark&hide_border=false&border=7C3AED&background=111111&ring=7C3AED&fire=7C3AED&currStreakNum=ffffff&sideNums=ffffff&currStreakLabel=7C3AED&sideLabels=7C3AED&dates=999999" width="100%" style="max-width: 480px;" alt="GitHub Streak" />
+  <img src="./profile/streak.svg" width="100%" style="max-width: 480px;" alt="GitHub Streak (Asia/Kolkata)" />
 </p>
 
 ---

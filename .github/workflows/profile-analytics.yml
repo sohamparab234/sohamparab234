@@ -41,10 +41,10 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           fail_on_error: true
 
-      - name: Generate timezone-correct streak card
+      - name: Generate Mumbai-timezone streak card
         run: python scripts/generate_streak.py
         env:
-          TZ: Asia/Kolkata
+          TZ: Asia/Kolkata # IANA name for Asia/Mumbai (UTC+05:30)
 
       - name: Commit generated analytics cards
         run: |

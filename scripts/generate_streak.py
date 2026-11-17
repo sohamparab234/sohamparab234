@@ -10,10 +10,10 @@ MUMBAI_TZ = timezone(timedelta(hours=5, minutes=30), name="Asia/Mumbai")
 URL = f"https://github.com/users/{USERNAME}/contributions"
 OUTPUT = "profile/streak.svg"
 
-ATTR_RE = re.compile(r"""([\\w:-]+)\\s*=\\s*(?:"([^"]*)"|'([^']*)'|([^\\s>]+))""")
-CELL_RE = re.compile(r"<td\\b(?P<attrs>[^>]*)>(?P<body>.*?)</td>", re.IGNORECASE | re.DOTALL)
-TOOLTIP_RE = re.compile(r"<tool-tip\\b(?P<attrs>[^>]*)>(?P<body>.*?)</tool-tip>", re.IGNORECASE | re.DOTALL)
-COUNT_RE = re.compile(r"\\b(\\d+)\\s+contributions?\\b", re.IGNORECASE)
+ATTR_RE = re.compile(r"""([\w:-]+)\s*=\s*(?:"([^"]*)"|'([^']*)'|([^\s>]+))""")
+CELL_RE = re.compile(r"<td\b(?P<attrs>[^>]*)>(?P<body>.*?)</td>", re.IGNORECASE | re.DOTALL)
+TOOLTIP_RE = re.compile(r"<tool-tip\b(?P<attrs>[^>]*)>(?P<body>.*?)</tool-tip>", re.IGNORECASE | re.DOTALL)
+COUNT_RE = re.compile(r"\b(\d+)\s+contributions?\b", re.IGNORECASE)
 CONFIRMED_COUNTS = {date(2026, 11, 9): 2}
 
 
@@ -63,7 +63,7 @@ def parse_calendar(html):
         if label_count:
             counts[day] = int(label_count.group(1))
             days[day] = counts[day] > 0
-        elif re.search(r"\\bno contributions?\\b", label, re.IGNORECASE):
+        elif re.search(r"\bno contributions?\b", label, re.IGNORECASE):
             counts[day] = 0
             days[day] = False
 
@@ -78,7 +78,7 @@ def parse_calendar(html):
             count = int(count_match.group(1))
             counts[linked_day] = count
             days[linked_day] = count > 0
-        elif re.search(r"\\bno contributions?\\b", text, re.IGNORECASE):
+        elif re.search(r"\bno contributions?\b", text, re.IGNORECASE):
             counts[linked_day] = 0
             days[linked_day] = False
 

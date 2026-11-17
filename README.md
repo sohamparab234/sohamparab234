@@ -180,16 +180,19 @@ An interoperability-focused project designed to explore how different government
 
 <h2 align="center">📊 GitHub Analytics</h2>
 
-<p align="center">
-  <img src="./profile/stats.svg" width="320" alt="GitHub Stats" />
-  &nbsp;&nbsp;
-  <img src="./profile/top-langs.svg" width="260" alt="Top Languages" />
-</p>
-
-<p align="center">
-  <img src="./profile/streak.svg" width="340" alt="GitHub Streak (Asia/Mumbai)" />
-</p>
-
+<table width="100%" border="0" align="center">
+  <tr>
+    <td width="33.33%" align="center" valign="middle">
+      <img src="./profile/stats.svg" width="300" alt="GitHub Stats" />
+    </td>
+    <td width="33.33%" align="center" valign="middle">
+      <img src="./profile/top-langs.svg" width="300" alt="Top Languages" />
+    </td>
+    <td width="33.33%" align="center" valign="middle">
+      <img src="./profile/streak.svg" width="300" alt="GitHub Streak (Asia/Mumbai)" />
+    </td>
+  </tr>
+</table>
 ---
 
 <h2 align="center">⚡ Contribution Journey</h2>

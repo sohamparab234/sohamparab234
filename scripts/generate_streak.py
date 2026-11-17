@@ -133,7 +133,7 @@ def make_svg(current, start, end, longest, updated):
 
 def main():
     today = datetime.now(MUMBAI_TZ).date()
-    request_url = URL + f"?to={today.isoformat()}&refresh={int(datetime.now(MUMBAI_TZ).timestamp())}"
+    request_url = URL + f"?refresh={int(datetime.now(MUMBAI_TZ).timestamp())}"
     request = Request(request_url, headers={
         "User-Agent": "Mozilla/5.0 (compatible; GitHubProfileAnalytics/2.1)",
         "Accept": "text/html, */*",
@@ -157,8 +157,9 @@ def main():
         raise RuntimeError(f"Calendar is stale/unexpected: latest={latest}; Asia/Mumbai today={today}.")
 
     # Apply the one verified historical correction, then calculate all streaks
-    # from the resulting daily activity map. This avoids trusting a known-missing
-    # count from GitHub's public HTML endpoint for 9 November 2026.
+    # from the resulting daily activity map. The public HTML endpoint omits this
+    # user's two contributions on 9 November 2026, so preserve the profile-calendar
+    # value explicitly; all other dates remain live-parsed from GitHub.
     for corrected_day, corrected_count in MANUAL_COUNT_OVERRIDES.items():
         source_count = counts.get(corrected_day)
         if source_count != corrected_count:

@@ -129,10 +129,14 @@ def make_svg(current, start, end, longest, updated):
 
 
 def main():
-    request = Request(URL, headers={
-        "User-Agent": "Mozilla/5.0 (compatible; GitHubProfileAnalytics/2.0)",
+    today = datetime.now(MUMBAI_TZ).date()
+    request_url = URL + f"?to={today.isoformat()}&refresh={int(datetime.now(MUMBAI_TZ).timestamp())}"
+    request = Request(request_url, headers={
+        "User-Agent": "Mozilla/5.0 (compatible; GitHubProfileAnalytics/2.1)",
         "Accept": "text/html, */*",
         "Accept-Language": "en-US,en;q=0.9",
+        "Cache-Control": "no-cache",
+        "Pragma": "no-cache",
         "Referer": f"https://github.com/{USERNAME}",
     })
     with urlopen(request, timeout=30) as response:
@@ -153,6 +157,20 @@ def main():
     for confirmed_day, expected_count in CONFIRMED_COUNTS.items():
         actual_count = counts.get(confirmed_day)
         if actual_count != expected_count:
+            for cell_match in CELL_RE.finditer(html):
+                cell_attrs = parse_attrs(cell_match.group("attrs"))
+                if cell_attrs.get("data-date") == confirmed_day.isoformat():
+                    print(f"DEBUG confirmed cell attributes: {cell_attrs!r}")
+                    cell_id = cell_attrs.get("id")
+                    for tip_match in TOOLTIP_RE.finditer(html):
+                        tip_attrs = parse_attrs(tip_match.group("attrs"))
+                        if tip_attrs.get("for") == cell_id:
+                            print(f"DEBUG confirmed tooltip attributes: {tip_attrs!r}")
+                            print(f"DEBUG confirmed tooltip body: {visible_text(tip_match.group('body'))!r}")
+            needle = confirmed_day.isoformat()
+            pos = html.find(needle)
+            if pos >= 0:
+                print(f"DEBUG HTML around date: {html[max(0, pos-500):pos+1200]!r}")
             raise RuntimeError(
                 f"Contribution verification failed for {confirmed_day}: "
                 f"expected {expected_count} from GitHub tooltip, got {actual_count!r}. "

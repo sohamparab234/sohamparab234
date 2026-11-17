@@ -11,7 +11,7 @@ on:
 
 concurrency:
   group: profile-analytics-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 permissions:
   contents: write
@@ -22,6 +22,9 @@ jobs:
     steps:
       - name: Check out profile repository
         uses: actions/checkout@v4
+
+      - name: Test contribution parser and streak calculation
+        run: python -m unittest discover -s scripts -p 'test_*.py' -v
 
       - name: Generate GitHub stats card
         uses: stats-organization/github-readme-stats-action@v2

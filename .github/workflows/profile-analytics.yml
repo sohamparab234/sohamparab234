@@ -11,7 +11,7 @@ on:
 
 concurrency:
   group: profile-analytics-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 permissions:
   contents: write
@@ -41,10 +41,8 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           fail_on_error: true
 
-      - name: Generate Mumbai-timezone streak card
+      - name: Generate and verify Asia/Mumbai streak card
         run: python scripts/generate_streak.py
-        env:
-          TZ: Asia/Kolkata # IANA name for Asia/Mumbai (UTC+05:30)
 
       - name: Commit generated analytics cards
         run: |

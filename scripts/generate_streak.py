@@ -88,6 +88,20 @@ def parse_calendar(html):
     return days, counts
 
 
+def apply_manual_overrides(days, counts):
+    """Apply profile-calendar corrections for dates omitted by public HTML."""
+    for corrected_day, corrected_count in MANUAL_COUNT_OVERRIDES.items():
+        source_count = counts.get(corrected_day)
+        if source_count != corrected_count:
+            print(
+                f"Applying verified correction for {corrected_day}: "
+                f"GitHub public HTML={source_count!r}, profile calendar={corrected_count}."
+            )
+        counts[corrected_day] = corrected_count
+        days[corrected_day] = corrected_count > 0
+    return days, counts
+
+
 def calculate_streaks(days, today):
     # A not-yet-active Mumbai day does not break a streak ending yesterday.
     end = today if days.get(today, False) else today - timedelta(days=1)
@@ -156,19 +170,7 @@ def main():
     if latest < today - timedelta(days=1) or latest > today + timedelta(days=1):
         raise RuntimeError(f"Calendar is stale/unexpected: latest={latest}; Asia/Mumbai today={today}.")
 
-    # Apply the one verified historical correction, then calculate all streaks
-    # from the resulting daily activity map. The public HTML endpoint omits this
-    # user's two contributions on 9 November 2026, so preserve the profile-calendar
-    # value explicitly; all other dates remain live-parsed from GitHub.
-    for corrected_day, corrected_count in MANUAL_COUNT_OVERRIDES.items():
-        source_count = counts.get(corrected_day)
-        if source_count != corrected_count:
-            print(
-                f"Applying verified correction for {corrected_day}: "
-                f"GitHub public HTML={source_count!r}, profile calendar={corrected_count}."
-            )
-        counts[corrected_day] = corrected_count
-        days[corrected_day] = corrected_count > 0
+    days, counts = apply_manual_overrides(days, counts)
 
     current, start, end, longest = calculate_streaks(days, today)
     import os

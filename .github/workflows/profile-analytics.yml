@@ -48,15 +48,33 @@ jobs:
         run: python scripts/generate_streak.py
 
       - name: Commit generated analytics cards
+        shell: bash
         run: |
+          set -e
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add profile/stats.svg profile/top-langs.svg profile/streak.svg
-          if git diff --cached --quiet; then
-            echo "Analytics cards are already up to date."
-            exit 0
-          fi
-          git commit -m "Update GitHub profile analytics"
-          # Another workflow may update the default branch while these cards are generated.
-          git pull --rebase origin main
-          git push
+
+          # Rebase can conflict when separate runs generate different SVG bytes.
+          # Reset the index to latest main but preserve generated SVGs in the
+          # working tree, then commit only those three assets.
+          for attempt in 1 2 3; do
+            git fetch origin main
+            git reset --mixed origin/main
+            git add profile/stats.svg profile/top-langs.svg profile/streak.svg
+
+            if git diff --cached --quiet; then
+              echo "Analytics cards are already up to date."
+              exit 0
+            fi
+
+            git commit -m "Update GitHub profile analytics"
+            if git push origin HEAD:main; then
+              echo "Analytics cards pushed successfully."
+              exit 0
+            fi
+
+            echo "Push attempt $attempt failed; retrying against the latest main."
+          done
+
+          echo "Could not push analytics cards after 3 attempts."
+          exit 1
